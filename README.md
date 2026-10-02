@@ -25,6 +25,10 @@ Every skill in this collection carries the `grounded-` prefix. A grounded system
 /grounded-design-system test <area>      run a readiness test
 ```
 
+The audit scopes the repository first (an app that consumes a design system, a library that is one, or both) and scores 15 areas as `answered`, `missing`, `disconnected`, `stale`, `violated` or `not determined`. It reads Tailwind v3 and v4, shadcn/ui with or without `components.json`, CSS-in-JS theme objects, Sass and Less, plain CSS, Storybook and DTCG tokens.
+
+Plugin users also get the command `/readiness-check <area>`, which runs the readiness test: one real decision, only the written context, the instruction "Flag missing context, do not invent it", and a report of the rules the agent applied against the gaps it named.
+
 ## Install
 
 With the [skills CLI](https://skills.sh), for Claude Code, Cursor, Codex and other agents:

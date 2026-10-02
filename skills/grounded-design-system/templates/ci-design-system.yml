@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: sh scripts/palette-audit.sh # REPLACE: see references/enforcement.md, fails on literals without an arbitrary: comment
+      - run: sh scripts/palette-audit.sh # REPLACE: see references/enforcement.md, fails on literals without the team's exception marker
 
   lint:
     name: Lint, warnings are errors
@@ -59,13 +59,13 @@ jobs:
       - run: npx vitest run tests/token-contract.test.ts tests/design-system-exceptions.test.ts
 
   visual:
-    name: Visual regression, light and dark
+    name: Visual regression, every theme
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/playwright:v1.55.0-noble # REPLACE: match the @playwright/test version in package.json
     steps:
       - uses: actions/checkout@v4
       - run: npm ci
-      - run: npx playwright test e2e/examples.spec.ts # REPLACE: renders every documented example in both themes
+      - run: npx playwright test e2e/examples.spec.ts # REPLACE: renders every documented example in each theme the system defines
       - if: failure()
         uses: actions/upload-artifact@v4
         with: { name: visual-diff, path: test-results }

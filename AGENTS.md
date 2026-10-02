@@ -6,7 +6,7 @@ Conventions for contributing skills to this repository. `CLAUDE.md` imports this
 
 A collection of agent skills distributed two ways: `npx skills add noemuch/skills` (skills CLI) and the Claude Code plugin `grounded`, served by the marketplace `noemuch` in `.claude-plugin/`. It is documentation plus a few POSIX shell scripts. There is no build.
 
-Skills are discovered from `skills/` automatically. Adding a skill needs no manifest change.
+Skills are discovered from `skills/` automatically, and plugin commands from `commands/`. Adding either needs no manifest change. A command is a thin entry point: it loads a skill's action file and adds no rule of its own.
 
 ## Naming
 

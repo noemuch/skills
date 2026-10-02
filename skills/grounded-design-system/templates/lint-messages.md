@@ -1,6 +1,6 @@
 # Lint messages written for the agent
 
-Template from grounded-design-system: ready-made rules for ESLint, Biome and Stylelint whose messages say what to use instead and where to log a gap. Copy the rules for the linter the repository already runs. Replace `@acme/*` and paths with real ones.
+Template from grounded-design-system: ready-made rules for ESLint, Biome and Stylelint whose messages say what to use instead and where to log a gap. Copy the rules for the linter the repository already runs. Replace `@acme/*` and paths with real ones, and `<gap-label>` and `<gap index>` with the team's answers.
 
 Every message follows one shape:
 
@@ -12,7 +12,7 @@ Every message follows one shape:
 
 ```js
 // eslint.config.js, merged into the existing config
-const GAP = "No fit? Log a gap: gh issue create --label area:design-system, plus one line in GAPS.md. Do not substitute."
+const GAP = "No fit? Log a gap: gh issue create --label <gap-label>, plus one line in <gap index>. Do not substitute."
 
 export default [
   {
@@ -69,8 +69,8 @@ CI runs `eslint . --max-warnings=0`, so a warning blocks unless an inline disabl
           "level": "error",
           "options": {
             "paths": {
-              "lucide-react": "Use an approved glyph from @acme/icons. No fit? Log a gap in GAPS.md with label area:design-system. Do not substitute.",
-              "react-icons": "Use an approved glyph from @acme/icons. No fit? Log a gap in GAPS.md with label area:design-system. Do not substitute."
+              "lucide-react": "Use an approved glyph from @acme/icons. No fit? Log a gap in <gap index> with label <gap-label>. Do not substitute.",
+              "react-icons": "Use an approved glyph from @acme/icons. No fit? Log a gap in <gap index> with label <gap-label>. Do not substitute."
             }
           }
         }
@@ -103,12 +103,12 @@ Biome has no selector-based syntax restriction equivalent to ESLint's `no-restri
     }]
   },
   "overrides": [
-    { "files": ["src/styles/tokens.css"], "rules": { "color-no-hex": null, "function-disallowed-list": null } }
+    { "files": ["<token source paths>"], "rules": { "color-no-hex": null, "function-disallowed-list": null } }
   ]
 }
 ```
 
-CI runs `stylelint "**/*.css" --max-warnings=0`.
+CI runs `stylelint "**/*.css" --max-warnings=0`. For SCSS, styled-components or emotion, Stylelint needs a `customSyntax`: see [references/stacks/sass.md](../references/stacks/sass.md) and [references/stacks/css-in-js.md](../references/stacks/css-in-js.md).
 
 ## Checking a message
 

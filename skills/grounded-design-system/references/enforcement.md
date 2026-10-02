@@ -8,9 +8,11 @@ Propose each mechanism in the team's existing tool. A repository on Biome gets B
 
 A CI step scans component code and fails on:
 
-- Hex, `rgb()`, `hsl()`, `oklch()` literals outside the token source.
+- Hex, `rgb()`, `hsl()`, `oklch()` literals and named colors outside the token source.
 - Raw palette steps from palettes the system does not use (`bg-pink-500` when pink is not in the system).
-- Arbitrary values without a reason comment on the same or previous line.
+- Arbitrary values without the team's exception marker on the same or previous line.
+
+Two values come from the team, never from this skill: the token source paths (start from `token-source:` in the inventory) and the exception marker, the comment prefix that says "this literal is deliberate". Ask both before writing the gate.
 
 Start from the measurement, then turn it into a gate:
 
@@ -19,17 +21,22 @@ sh scripts/count-hardcoded.sh .   # baseline per directory
 ```
 
 ```bash
-# scripts/palette-audit.sh: fails on a hex literal in component code without a reason comment
-# git pathspec: 'src/*.tsx' matches at any depth under src/
-files=$(git ls-files 'src/*.tsx' 'src/*.ts' | grep -v '^src/styles/')
-hits=$(printf '%s\n' "$files" | xargs grep -nE '#[0-9A-Fa-f]{3,8}([^0-9A-Za-z]|$)' \
-  | grep -v 'arbitrary:' || true)
+# scripts/palette-audit.sh: fails on a color literal in component code without the exception marker
+TOKEN_SOURCES='<ERE matching the token source paths>'   # REPLACE, from detect-stack.sh token-source:
+EXCEPTION_MARKER='<exception-marker>'                    # REPLACE, the team's comment prefix
+SOURCES='<component globs>'                              # REPLACE, e.g. 'src/*.tsx' (git pathspec, any depth)
+files=$(git ls-files "$SOURCES" | grep -Ev "$TOKEN_SOURCES")
+[ -n "$files" ] || exit 0
+hits=$(printf '%s\n' "$files" | xargs grep -nE '(^|[^0-9A-Za-z&/])#([0-9A-Fa-f]{3,4}|[0-9A-Fa-f]{6}|[0-9A-Fa-f]{8})([^0-9A-Za-z_-]|$)|(rgba?|hsla?|oklch)\([[:space:]]*[0-9.]' \
+  | grep -vF "$EXCEPTION_MARKER" || true)
 if [ -n "$hits" ]; then
   printf '%s\n' "$hits"
   echo "Hardcoded color. Use a semantic token from DESIGN.md. No token fits? Log a gap, do not add a literal."
   exit 1
 fi
 ```
+
+The marker check here reads the same line only. To accept a marker on the previous line, run the scan in `awk` and keep the previous line. Extend the pattern with the named colors and units `count-hardcoded.sh` reports for this repository.
 
 Adopt the gate per directory: directories at zero become blocking first, the rest join as they reach zero. A gate that fails on day one gets disabled on day two.
 
@@ -66,7 +73,7 @@ The system prefers its components over raw HTML. A raw `<button>` is sometimes r
   selector: "JSXOpeningElement[name.name='button']",
   message:
     "Use Button from @acme/ui. If Button cannot do this, keep the raw element " +
-    "and log a gap: gh issue create --label area:design-system, plus one line in GAPS.md.",
+    "and log a gap: gh issue create --label <gap-label>, plus one line in GAPS.md.",
 }]
 ```
 

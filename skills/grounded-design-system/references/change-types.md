@@ -8,7 +8,7 @@ A change to the system has exactly one type, declared in the spec before code is
 
 | Type | Definition | Evidence required |
 | --- | --- | --- |
-| `create` | A new component or pattern | Sidecar with status, example, snapshots in light and dark |
+| `create` | A new component or pattern | Sidecar with status, example, a snapshot in each theme the system defines |
 | `refine` | Visual only, no API change | Before and after screenshots of the component and of sampled consumers |
 | `extend` | Additive API change, nothing removed or renamed | Public API diff shows additions only; existing snapshots unchanged |
 | `refactor` | Identical rendered DOM, identical public API | Rendered HTML diff is empty; API diff is empty |
@@ -67,15 +67,17 @@ sed -n "1p;$(( n / 4 + 1 ))p;$(( (n + 1) / 2 ))p;$(( 3 * n / 4 ))p;${n}p" /tmp/c
 
 The tier thresholds are the article's defaults. The team can move them; record the numbers in `AGENTS.md` so the agent reads the same ones CI uses.
 
+In a library that publishes the system, consumers live in other repositories and an import count inside the repository measures internal composition only. Set the blast radius on the variant matrix instead: every theme, build and entry point a change reaches, with visual regression across it. Which matrix counts is a team decision.
+
 ## What runs on every pull request
 
 | Check | Fails when |
 | --- | --- |
 | Registry regen | `git diff --exit-code` on the registry after regeneration is non-empty |
-| Palette audit | A hex, color function or arbitrary value without a reason comment appears outside the token source |
+| Palette audit | A hex, color function or arbitrary value without the team's exception marker appears outside the token source |
 | Lint | Any warning (`--max-warnings=0`) |
 | Token contract | A semantic token is missing in a theme or aliases the wrong scale |
-| Visual regression | A documented example differs from main, in light or dark, beyond the threshold |
+| Visual regression | A documented example differs from main, in any theme, beyond the threshold |
 | Changelog | A touched component has no changelog entry (warning first, blocking once adopted) |
 | Change type | A declared `refactor` changes DOM, a declared `extend` removes API |
 | Blast radius | The tier's evidence is missing from the PR body |
@@ -86,10 +88,11 @@ None of these checks is clever. Their value is that they run every time.
 
 ### Visual regression
 
-Render every documented example in light and dark and pixel-diff against main. Playwright's `toHaveScreenshot` is enough to start:
+Render every documented example in each theme the system defines and pixel-diff against main. Playwright's `toHaveScreenshot` is enough to start:
 
 ```ts
-for (const theme of ["light", "dark"] as const) {
+const THEMES = ["<theme>"] as const // REPLACE: every theme the system defines
+for (const theme of THEMES) {
   test(`${slug} ${theme}`, async ({ page }) => {
     await page.goto(`/examples/${slug}?theme=${theme}`)
     await expect(page).toHaveScreenshot(`${slug}-${theme}.png`, { maxDiffPixelRatio: 0.001 })

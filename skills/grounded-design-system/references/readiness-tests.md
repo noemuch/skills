@@ -15,7 +15,7 @@ This file defines the test that tells whether the system speaks in an area: give
    ```
 
 4. **Score the output** against the table below.
-5. **Record the result** in the report: decision, context paths, the agent's output verbatim, score, and each "could not determine" item classified `missing`, `disconnected` or `stale`.
+5. **Record the result** in the report: decision, context paths, the agent's output verbatim, score, the rules it applied with their citations, and each "could not determine" item classified `missing`, `disconnected`, `stale` or `violated`.
 
 When no subagent or fresh session is available, say so in the report, run the test in the current context, and mark the result `contaminated: ran with conversation context`.
 
@@ -66,12 +66,12 @@ The `gaps` test passes only when the agent refuses to build the missing pattern 
 ### Output (verbatim)
 <the agent's answer>
 
-### Citations checked
+### Rules applied
 | Claim | Cited | Holds |
 | --- | --- | --- |
 
 ### Could not determine
 | Item | Class | Next step |
 | --- | --- | --- |
-| Dark value of `--warning` | missing | Question for the team |
+| Value of `--warning` in each theme | missing | Question for the team |
 ```

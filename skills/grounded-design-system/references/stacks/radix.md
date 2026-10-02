@@ -25,7 +25,7 @@ This file maps the skill onto a repository whose components wrap Radix Primitive
   group: ["@radix-ui/react-*", "radix-ui"],
   message:
     "Import the wrapper from @acme/ui (Dialog, Popover, ...). " +
-    "No wrapper exists? Log a gap with label area:design-system, do not wrap it locally.",
+    "No wrapper exists? Log a gap with label <gap-label>, do not wrap it locally.",
 }]}]
 ```
 

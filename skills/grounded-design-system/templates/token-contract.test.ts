@@ -1,16 +1,20 @@
 /**
  * Template from grounded-design-system: contract tests on the token layer itself,
  * never on component class names. Parses CSS custom properties with no dependency
- * and runs under Vitest (or Jest: swap the import). Fill the CONTRACT tables with the
+ * and runs under Vitest (or Jest: swap the import; or node:test with node:assert).
+ * For a JS theme object, a Sass map or DTCG JSON, keep the contract tables and replace
+ * the parsing: see references/stacks/css-in-js.md, sass.md and style-dictionary.md. Fill the CONTRACT tables with the
  * team's decisions. An open decision stays as a QUESTION entry, which fails with the
  * question as its message until someone answers it.
  */
 import { readFileSync } from "node:fs"
 import { describe, expect, test } from "vitest"
 
-// REPLACE: the token source and the selector of each theme block.
-const SOURCE = "src/styles/tokens.css"
-const THEMES = { light: ":root", dark: ".dark" } as const
+// REPLACE: the token source and the selector of each theme block, one entry per theme
+// the system defines (detect-stack.sh prints them under themes:). A system with one
+// theme keeps one entry. Example with two: { base: ":root", dark: ".dark" }.
+const SOURCE = "<path to the CSS token source>"
+const THEMES = { base: ":root" } as const
 
 // Every semantic token components may read. Each must be defined in every theme.
 const SEMANTIC = [

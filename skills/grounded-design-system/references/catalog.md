@@ -56,7 +56,7 @@ export default defineMeta({
 
 A `missing` entry renders as a placeholder in the team's docs, linked to its issue, so people see the same hole the machine does.
 
-Which component is `deprecated` and which is canonical is a team decision. The audit lists duplicates with their import counts and asks. It never assigns a status.
+Which component is `deprecated` and which is canonical is a team decision. The audit lists duplicates with their importer counts from `component-usage.sh` and asks. It never assigns a status. In a library, those counts measure internal composition; consumers live in other repositories.
 
 ## Examples are the documentation
 

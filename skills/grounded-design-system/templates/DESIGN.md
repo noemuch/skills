@@ -1,13 +1,16 @@
 <!--
 Template from grounded-design-system. Generate the token tables from the token
 source; write the Usage column from the team's answers only. A usage you cannot
-source is a question, not a sentence. The rows below are examples of the
-format; replace every one. Delete this comment.
+source is a question, not a sentence. Give each color table one value column per
+theme the system defines (detect-stack.sh prints them under themes:); a system
+with one theme keeps the single Value column. Never add a column for a theme the
+system does not define. The rows below are examples of the format; replace every
+one. Delete this comment.
 -->
 
 # DESIGN.md
 
-**Agents: read this file before writing any UI code.** It is the design language of this repository: every token with its light value, its dark value and its usage. A value without a usage is a palette. A value with a usage is a decision.
+**Agents: read this file before writing any UI code.** It is the design language of this repository: every token with its value in each theme and its usage. A value without a usage is a palette. A value with a usage is a decision.
 
 ## Quick rules
 
@@ -19,13 +22,13 @@ format; replace every one. Delete this comment.
 
 ## Color
 
-| Token | Light | Dark | Usage |
-| --- | --- | --- | --- |
-| `background` | `#FFFFFF` | `#0A0A0A` | Page background. Never for raised surfaces. |
-| `foreground` | `#0A0A0A` | `#FAFAFA` | Body text and icons on `background`. |
-| `muted-foreground` | `#6B7280` | `#9CA3AF` | Secondary text: captions, metadata, helper text. Never for disabled states. |
-| `border` | `#E5E7EB` | `#262626` | Dividers and input borders. Never for focus. |
-| `destructive` | `#DC2626` | `#EF4444` | Irreversible actions and error text. Never for warnings. |
+| Token | Value (`<theme>`) | Usage |
+| --- | --- | --- |
+| `background` | `#FFFFFF` | Page background. Never for raised surfaces. |
+| `foreground` | `#0A0A0A` | Body text and icons on `background`. |
+| `muted-foreground` | `#6B7280` | Secondary text: captions, metadata, helper text. Never for disabled states. |
+| `border` | `#E5E7EB` | Dividers and input borders. Never for focus. |
+| `destructive` | `#DC2626` | Irreversible actions and error text. Never for warnings. |
 
 ## Spacing
 

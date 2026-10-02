@@ -1,7 +1,8 @@
 <!--
 Template from grounded-design-system. Merge the UI sections into the repository's
 existing AGENTS.md; never replace the file. Replace every <placeholder> and
-@acme/ui with real values. Delete this comment.
+@acme/ui with real values: <gap-label> and <exception-marker> are the team's answers,
+never defaults. Delete this comment.
 -->
 
 # AGENTS.md
@@ -15,7 +16,7 @@ Instructions for every coding agent in this repository. `CLAUDE.md` imports this
 3. Import components from `@acme/ui`. Prefer them over raw HTML elements.
 4. A raw element (`<button>`, `<input>`, `<table>`, `<dialog>`) where a component would sit requires a gap entry in the same change. See "When the system has no answer".
 5. Colors, spacing, radii and shadows come from tokens. Hex, `rgb()`, `hsl()` and `oklch()` in component code fail `<palette audit command>`.
-6. An arbitrary value (`w-[312px]`) carries a comment starting with `arbitrary:` on the same or previous line, stating why no token fits.
+6. An arbitrary value (`w-[312px]`) carries a comment starting with `<exception-marker>` on the same or previous line, stating why no token fits.
 7. Match a design value to a token by usage, never by the nearest number.
 
 ## When the system has no answer
@@ -24,7 +25,7 @@ When the design system has no component, token or pattern for what you need, fla
 
 A gap entry is two things:
 
-1. An issue: `gh issue create --label area:design-system --title "<Thing>: <what it must do>"`, with the file that needed it in the body.
+1. An issue: `gh issue create --label <gap-label> --title "<Thing>: <what it must do>"`, with the file that needed it in the body.
 2. One line in `<GAPS.md or packages/ui/README.md#component-gaps>`: `- <Thing>: <what it must do> (#<issue>)`.
 
 Then continue the task without the missing piece, or keep the raw element with `eslint-disable-next-line no-restricted-syntax -- gap #<issue>`.
@@ -48,5 +49,5 @@ Then continue the task without the missing piece, or keep the raw element with `
 
 ## Working rules
 
-- Work on a branch in its own worktree. Commits on `main` and `--no-verify` are refused by hooks.
+- Work on a branch in its own worktree. Commits on `<protected branch>` and `--no-verify` are refused by hooks.
 - When a session reveals something: an actionable fix becomes an issue, a recurring convention becomes a rule in `.agents/rules/`, a story becomes a note.

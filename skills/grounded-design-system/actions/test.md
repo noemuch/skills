@@ -1,6 +1,8 @@
 # Action: test
 
-Purpose: find out whether the system speaks in one area, by giving an agent a real decision, only the written context and the instruction to flag what is missing. The result says `speaks`, `partial` or `silent`, with the missing context classified.
+Purpose: find out whether the system speaks in one area, by giving an agent a real decision, only the written context and the instruction to flag what is missing. The result says `speaks`, `partial` or `silent`, with the rules the agent applied set against the gaps it named, and the missing context classified.
+
+Plugin users also reach this action through the `/readiness-check` command, which loads this file.
 
 ## Inputs
 
@@ -15,7 +17,7 @@ Purpose: find out whether the system speaks in one area, by giving an agent a re
 4. Run the test in a fresh subagent or session, with the file paths, the decision and the instruction from the protocol, verbatim. Give nothing else.
 5. Check every citation in the output by opening the file at the cited line.
 6. Compare the output to the team's answer. Score `speaks`, `partial` or `silent`.
-7. Classify each "could not determine" item and each invention as `missing`, `disconnected` or `stale`.
+7. Classify each "could not determine" item and each invention as `missing`, `disconnected`, `stale` or `violated`, per [doctrine.md](../references/doctrine.md#scores-and-gap-classes).
 8. Write the report in the format from the protocol. Offer to log each `missing` item with [gap](gap.md); log only on a yes.
 
 ## Stop conditions

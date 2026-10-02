@@ -33,6 +33,18 @@ Rules for the layout:
 
 Detect what exists before proposing anything. `detect-stack.sh` prints `agent-files:`. A repository with a working `.cursorrules` and nothing else keeps its content: move it into `AGENTS.md`, then symlink or point to it.
 
+## Where the files live: app, library, monorepo
+
+The audit's `Scope:` line says which agents the repository serves. Place files for each, per [doctrine.md](doctrine.md#two-kinds-of-agent):
+
+| Repository | Contributor agents | Consumer agents |
+| --- | --- | --- |
+| App | Root `AGENTS.md`, rules scoped to the UI directories | Same files |
+| Library | Root `AGENTS.md`, rules scoped to source directories; never to compiled output | A guidance file inside the published package. Check `package:` in the inventory: with a `files` field, the file ships only if listed there. The file name and its place are team decisions; ask them |
+| Monorepo | Root `AGENTS.md`, a nested `AGENTS.md` in the system's package | The app's root files; the package's shipped guidance for other repositories |
+
+Consumer guidance in a package says what to import, which tokens or classes are public, and where to report a missing piece (the issue tracker URL with the gap label). Types and doc comments ship with the code and reach consumer agents too; count them as part of the answer.
+
 ## What AGENTS.md says about UI
 
 Keep the root file short. It routes; rules and DESIGN.md hold the detail. The UI section carries:
@@ -73,12 +85,14 @@ Confirm each tool loads the rule with a readiness test in that tool. Do not assu
 
 ## DESIGN.md, written for the machine
 
-The first line addresses agents: read this before writing any UI code. The file lists every semantic token with its light value, its dark value and its usage. A value without a usage is a palette. A value with a usage is a decision.
+The first line addresses agents: read this before writing any UI code. The file lists every semantic token with its value in each theme the system defines and its usage. A value without a usage is a palette. A value with a usage is a decision.
+
+Read the theme set from the token source (`themes:` in the inventory) and give the table one value column per theme. A system with one theme has one value column. Whether a second theme is in scope is a team question, never a column you add.
 
 ```markdown
-| Token | Light | Dark | Usage |
-| --- | --- | --- | --- |
-| `text-muted-foreground` | `#6B7280` | `#9CA3AF` | Secondary text: captions, metadata, helper text. Never for disabled states. |
+| Token | Value | Usage |
+| --- | --- | --- |
+| `text-muted-foreground` | `#6B7280` | Secondary text: captions, metadata, helper text. Never for disabled states. |
 ```
 
 Quick rules every DESIGN.md carries, adapted to the token syntax of the stack:
@@ -88,7 +102,7 @@ Quick rules every DESIGN.md carries, adapted to the token syntax of the stack:
 - **Match on usage, never on the nearest number.** A design value of `#6B7280` maps to the token whose usage fits, even when another token has that exact value.
 - When no token fits the usage, stop and log a gap. Never write a literal.
 
-Three answers to "secondary text", and why only the third survives a rebrand, a dark mode or a contrast fix:
+Three answers to "secondary text", and why only the third survives a rebrand, a new theme or a contrast fix:
 
 ```tsx
 <p className="text-[#6B7280]">          // a value
@@ -102,20 +116,22 @@ Generate the token tables from the token source when one exists, so DESIGN.md ca
 
 ## Lint the rules themselves
 
-Run this on every agent file you write or audit. Each hit is a rule an agent satisfies with anything.
+Run this on every agent file you write or audit. Each hit is a rule an agent satisfies with anything. It passes only the paths that exist, so an empty result means something:
 
 ```bash
-rg -n -i -w -e appropriate -e expected -e consider -e 'if needed' \
-  -e 'use your judgment' -e 'looks fine' \
-  AGENTS.md CLAUDE.md DESIGN.md .agents .claude .cursor 2>/dev/null
+files=$(ls -d AGENTS.md CLAUDE.md DESIGN.md .agents .claude .cursor 2>/dev/null)
+if [ -z "$files" ]; then
+  echo "no agent files: rule wording scores missing"
+else
+  # shellcheck disable=SC2086
+  rg -n -i -w -e appropriate -e expected -e consider -e 'if needed' \
+    -e 'use your judgment' -e 'looks fine' $files || echo "no hits"
+fi
 ```
 
-Without `rg`:
+Without `rg`, replace the `rg` line with `grep -rniwE 'appropriate|expected|consider|if needed|use your judgment|looks fine' $files`.
 
-```bash
-grep -rniwE 'appropriate|expected|consider|if needed|use your judgment|looks fine' \
-  AGENTS.md CLAUDE.md DESIGN.md .agents .claude .cursor 2>/dev/null
-```
+"no agent files" never counts as a pass: the audit scores rule wording `missing`. "no hits" passes the wording check; each UI rule must still be one of the four mechanical forms.
 
 Rewrite each hit into one of the four mechanical forms in [doctrine.md](doctrine.md#mechanical-rules). When the rewrite needs a number or a list the repository does not hold, it becomes a question for the team.
 
