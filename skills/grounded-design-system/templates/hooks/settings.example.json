@@ -1,0 +1,16 @@
+{
+  "$comment": "Template from grounded-design-system: merge the hooks key into .claude/settings.json. Registers pre-tool-use.sh for file edits and shell commands.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit|NotebookEdit|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/pre-tool-use.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

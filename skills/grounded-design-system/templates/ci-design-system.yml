@@ -1,0 +1,112 @@
+# Template from grounded-design-system: the design system gate as GitHub Actions.
+# Save as .github/workflows/design-system.yml. Every `run:` line marked REPLACE
+# points at a script the repository provides; adapt names to its package manager.
+# Translate to another CI provider job by job. Each job maps to one row of
+# "What runs on every pull request" in references/change-types.md.
+
+name: design-system
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: design-system-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  registry:
+    name: Registry matches metadata
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run registry:build # REPLACE: regenerates registry.json from every *.meta.ts, fails on a component without one
+      - name: Fail on drift
+        run: |
+          git diff --exit-code -- registry.json || {
+            echo "::error::registry.json is stale. Run npm run registry:build and commit the result."
+            exit 1
+          }
+
+  palette:
+    name: Palette audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh scripts/palette-audit.sh # REPLACE: see references/enforcement.md, fails on literals without an arbitrary: comment
+
+  lint:
+    name: Lint, warnings are errors
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx eslint . --max-warnings=0 # REPLACE: biome ci, or stylelint --max-warnings=0
+
+  tokens:
+    name: Token contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx vitest run tests/token-contract.test.ts tests/design-system-exceptions.test.ts
+
+  visual:
+    name: Visual regression, light and dark
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.55.0-noble # REPLACE: match the @playwright/test version in package.json
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npx playwright test e2e/examples.spec.ts # REPLACE: renders every documented example in both themes
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with: { name: visual-diff, path: test-results }
+
+  changelog:
+    name: Changelog on touched components
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Warn on components changed without a changelog line
+        run: |
+          base="origin/${{ github.base_ref }}"
+          root="packages/ui/src/components" # REPLACE
+          changed=$(git diff --name-only "$base"...HEAD -- "$root" \
+            | sed -E "s#^$root/([^/]+)/.*#\1#" | sort -u)
+          for c in $changed; do
+            git diff --name-only "$base"...HEAD | grep -q "^$root/$c/CHANGELOG.md$" \
+              || echo "::warning::$c changed without a CHANGELOG.md entry. Add one line: type, what, why."
+          done
+
+  blast-radius:
+    name: Blast radius evidence
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Count consumers and require the tier's evidence
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: |
+          # REPLACE: scripts/blast-radius.sh prints one line per touched component:
+          # "<component> <consumer count>" counted by import, see references/change-types.md
+          sh scripts/blast-radius.sh "origin/${{ github.base_ref }}" > radius.txt
+          cat radius.txt
+          max=$(awk '{ if ($2 > m) m = $2 } END { print m + 0 }' radius.txt)
+          if [ "$max" -gt 50 ]; then
+            printf '%s' "$PR_BODY" | grep -q '## Consumers checked' \
+              && printf '%s' "$PR_BODY" | grep -q '## Human note' \
+              || { echo "::error::Over 50 consumers. Add '## Consumers checked' with 5 sampled consumers and '## Human note'."; exit 1; }
+          elif [ "$max" -gt 10 ]; then
+            printf '%s' "$PR_BODY" | grep -q '## Consumers checked' \
+              || { echo "::error::11 to 50 consumers. Add '## Consumers checked' with 3 sampled consumers (first, middle, last by path)."; exit 1; }
+          fi
