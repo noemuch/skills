@@ -1,13 +1,20 @@
 {
   "name": "grounded",
-  "description": "Grounded skills for design systems: audit where the system is silent, set up catalog, enforcement and gap logging, and test whether agents follow it.",
-  "version": "0.2.0",
+  "description": "Agent skills for design engineers: design systems, interfaces, motion, and the workflows that let agents build them without guessing.",
+  "version": "0.3.0",
   "author": {
     "name": "Noé Chagué",
     "url": "https://noechague.com"
   },
-  "homepage": "https://noechague.com/writing/make-your-design-system-ai-ready",
+  "homepage": "https://noechague.com/skills",
   "repository": "https://github.com/noemuch/skills",
   "license": "MIT",
-  "keywords": ["design-system", "agents", "ai-ready", "tokens", "components", "ci"]
+  "keywords": [
+    "design-engineering",
+    "design-system",
+    "interfaces",
+    "agents",
+    "ai-ready",
+    "motion"
+  ]
 }
