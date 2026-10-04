@@ -2,49 +2,29 @@
 
 [![skills.sh](https://skills.sh/b/noemuch/skills)](https://skills.sh/noemuch/skills)
 
-Agent skills that make a codebase answer instead of letting the agent guess.
+A collection of agent skills for design engineers: design systems, interfaces, motion, and the workflows that let agents build them without guessing.
 
-## Grounded
-
-Every skill in this collection carries the `grounded-` prefix. A grounded system is one where an agent building on it reads answers from the repository: what to use, what it may not do, and what to do when the answer does not exist. Where the system is silent, a grounded skill flags the silence instead of filling it with the most plausible guess. Each skill applies that rule to itself: when it cannot tell what your team decided, it asks.
+These skills cover what I write about on [noechague.com](https://noechague.com) and what I build day to day as a design engineer.
 
 ## Skills
 
-| Skill | What it does |
-| --- | --- |
-| [**grounded-design-system**](skills/grounded-design-system/SKILL.md) | Makes a team's design system AI-ready inside their own repository, so agents building UI read answers instead of guessing. Audits where the system is silent, sets up the context layer, catalog, enforcement and gap log one phase at a time, logs missing pieces instead of inventing around them, and runs readiness tests. |
+- [**grounded-design-system**](skills/grounded-design-system): Makes your design system AI-ready inside your own repository. Audits where the system is silent, sets up the catalog, the enforcement and the gap log one step at a time, and logs what is missing instead of inventing it.
+- [**readiness-check**](commands/readiness-check.md): Tests whether agents follow your design system: one real decision, only the written context, and a report of what they applied against what they could not find. User-invoked, Claude Code plugin.
 
-`grounded-design-system` is the companion of the article [Make your design system AI-ready](https://noechague.com/writing/make-your-design-system-ai-ready). It implements the article's doctrine in your repository and stack:
-
-```text
-/grounded-design-system audit            score where the system is silent, with evidence
-/grounded-design-system setup week1      describe the catalog
-/grounded-design-system setup week2      enforce it in CI
-/grounded-design-system setup week3      log what's missing
-/grounded-design-system gap <need>       log a gap instead of building around it
-/grounded-design-system test <area>      run a readiness test
-```
-
-The audit scopes the repository first (an app that consumes a design system, a library that is one, or both) and scores 15 areas as `answered`, `missing`, `disconnected`, `stale`, `violated` or `not determined`. It reads Tailwind v3 and v4, shadcn/ui with or without `components.json`, CSS-in-JS theme objects, Sass and Less, plain CSS, Storybook and DTCG tokens.
-
-Plugin users also get the command `/readiness-check <area>`, which runs the readiness test: one real decision, only the written context, the instruction "Flag missing context, do not invent it", and a report of the rules the agent applied against the gaps it named.
+Skills that make an area of your codebase answer carry the `grounded-` prefix. Tools you run by hand get a short name.
 
 ## Install
-
-With the [skills CLI](https://skills.sh), for Claude Code, Cursor, Codex and other agents:
 
 ```bash
 npx skills add noemuch/skills
 ```
 
-As a Claude Code plugin:
+### Claude Code plugin
 
 ```text
 /plugin marketplace add noemuch/skills
 /plugin install grounded@noemuch
 ```
-
-Plugin users invoke skills with the plugin prefix: `/grounded:grounded-design-system`.
 
 ## License
 

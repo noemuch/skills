@@ -4,13 +4,15 @@ Conventions for contributing skills to this repository. `CLAUDE.md` imports this
 
 ## What this repository is
 
-A collection of agent skills distributed two ways: `npx skills add noemuch/skills` (skills CLI) and the Claude Code plugin `grounded`, served by the marketplace `noemuch` in `.claude-plugin/`. It is documentation plus a few POSIX shell scripts. There is no build.
+A collection of agent skills for design engineers (design systems, interfaces, motion, agent workflows), distributed two ways: `npx skills add noemuch/skills` (skills CLI) and the Claude Code plugin `grounded`, served by the marketplace `noemuch` in `.claude-plugin/`. It is documentation plus a few POSIX shell scripts. There is no build.
 
 Skills are discovered from `skills/` automatically, and plugin commands from `commands/`. Adding either needs no manifest change. A command is a thin entry point: it loads a skill's action file and adds no rule of its own.
 
 ## Naming
 
-- Every skill is named `grounded-<domain>`: `grounded-design-system`, `grounded-tokens`, `grounded-components`. "Grounded" means the system answers instead of the agent guessing.
+- A skill that makes an area of the codebase answer is named `grounded-<domain>`: `grounded-design-system`, `grounded-motion`. "Grounded" means the system answers instead of the agent guessing.
+- A tool the user runs by hand (a plugin command, a one-off generator) gets a short verb or noun: `readiness-check`.
+- Each skill directory carries a `README.md`: what it does, its actions, how to install it alone. The root `README.md` stays a one-line-per-skill index.
 - The name appears in two places: the directory under `skills/` and `name` in the `SKILL.md` frontmatter. They are identical: lowercase letters, digits and single hyphens, 64 characters at most.
 - Renaming a skill means changing both, then `rg -n '<old-name>'` returns nothing.
 

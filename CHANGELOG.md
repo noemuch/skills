@@ -2,6 +2,13 @@
 
 Every release of the `grounded` plugin. The version matches `version` in `.claude-plugin/plugin.json`.
 
+## 0.3.0
+
+- The repository becomes a collection: the root README is an index, one line per skill, and introduces the collection's scope (design systems, interfaces, motion, agent workflows).
+- `grounded-design-system` gets its own `README.md` with its actions and how to install it alone.
+- Naming: the `grounded-` prefix is for skills that make an area answer; tools run by hand keep a short name.
+- Plugin and marketplace descriptions follow the collection; homepage points to noechague.com/skills.
+
 ## 0.2.0
 
 Fixes from audits run on three public repositories: a Next.js app with Tailwind v3 and shadcn/ui installed by hand, a React component library on emotion with a JS theme object and Storybook, and a Sass framework that commits its compiled CSS.
